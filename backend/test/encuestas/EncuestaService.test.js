@@ -264,6 +264,21 @@ describe("EncuestaService", () => {
             await expect(servicio.obtenerGanadora(3)).rejects.toThrow(ErrorNoEncontrado);
         });
 
+        test("rechaza una encuesta sin opciones con un error de validacion", async () => {
+            const encuestaSinOpciones = new Encuesta({
+                id: 3,
+                fechaInicio: "2026-10-01",
+                fechaFin: "2026-10-31",
+                descripcion: "¿Cual es tu equipo favorito?",
+                idEmpleado: 2
+            });
+            repositorio.obtenerPorId.mockResolvedValue(encuestaSinOpciones);
+
+            const resultado = servicio.obtenerGanadora(3);
+
+            await expect(resultado).rejects.toThrow(ErrorValidacion);
+        });
+
         test("rechaza un identificador invalido", async () => {
             await expect(servicio.obtenerGanadora("abc")).rejects.toThrow(ErrorValidacion);
         });

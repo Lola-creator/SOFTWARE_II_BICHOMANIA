@@ -1,5 +1,6 @@
 const express = require("express");
 const { responderCasoDeUso } = require("../../../compartido/http/responderCasoDeUso");
+const { idClienteAutenticado } = require("../../../compartido/http/usuarioAutenticado"); // ←
 
 // Controladores HTTP del contexto Identidad (clientes y empleados)
 const crearRutasIdentidad = ({ identidadService }) => {
@@ -16,7 +17,7 @@ const crearRutasIdentidad = ({ identidadService }) => {
         (req) => identidadService.iniciarSesionEmpleado(req.body),
     ));
     rutas.get("/profile", responderCasoDeUso(
-        (req) => identidadService.obtenerPerfil(req.query.id_cliente),
+        (req) => identidadService.obtenerPerfil(idClienteAutenticado(req)), // ←
     ));
     rutas.get("/clientes", responderCasoDeUso(() => identidadService.listarClientes()));
 

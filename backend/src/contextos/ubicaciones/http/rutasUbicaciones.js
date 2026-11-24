@@ -1,5 +1,6 @@
 const express = require("express");
 const { responderCasoDeUso } = require("../../../compartido/http/responderCasoDeUso");
+const { idClienteAutenticado } = require("../../../compartido/http/usuarioAutenticado"); // ←
 
 const crearRutasUbicaciones = ({ ubicacionService }) => {
     const rutas = express.Router();
@@ -13,8 +14,9 @@ const crearRutasUbicaciones = ({ ubicacionService }) => {
     rutas.post("/ciudades", responderCasoDeUso((req) => ubicacionService.agregarCiudad(req.body), json));
     rutas.put("/ciudades/:id", responderCasoDeUso((req) => ubicacionService.actualizarCiudad(req.params.id, req.body), json));
 
-    rutas.get("/direccion", responderCasoDeUso((req) => ubicacionService.listarDirecciones(req.query.id_cliente)));
-    rutas.post("/direccionAgregar", responderCasoDeUso((req) => ubicacionService.agregarDireccion(req.body), json));
+    rutas.get("/direccion", responderCasoDeUso((req) => ubicacionService.listarDirecciones(idClienteAutenticado(req)))); // ←
+    rutas.post("/direccionAgregar", responderCasoDeUso(
+        (req) => ubicacionService.agregarDireccion({ ...req.body, id_cliente: idClienteAutenticado(req) }), json)); // ←
 
     return rutas;
 };

@@ -1,6 +1,7 @@
 const { RepositorioPedidos } = require("../../dominio/puertos");
 const Pedido = require("../../dominio/Pedido");
 const enTransaccion = require("../../../../compartido/infraestructura/mysql/enTransaccion");
+const GestorCarritosMySQL = require("./GestorCarritosMySQL");
 
 const TOTAL_PEDIDO = `
     SELECT COALESCE(SUM(ic.cantidad * p.precio), 0)
@@ -13,8 +14,20 @@ class PedidoRepositoryMySQL extends RepositorioPedidos {
         this.conexion = conexion;
     }
 
-    async guardar(pedido) {
-        const [r] = await this.conexion.execute(
+    guardar(pedido) {
+        return PedidoRepositoryMySQL.#insertarPedido(this.conexion, pedido);
+    }
+
+    guardarYCerrarCarrito(pedido, fechaNuevoCarrito) {
+        return enTransaccion(this.conexion, async (tx) => {
+            const idPedido = await PedidoRepositoryMySQL.#insertarPedido(tx, pedido);
+            const idNuevoCarrito = await GestorCarritosMySQL.cerrarYAbrirNuevoEn(tx, pedido.idCarrito, fechaNuevoCarrito);
+            return { idPedido, idNuevoCarrito };
+        });
+    }
+
+    static async #insertarPedido(conexion, pedido) {
+        const [r] = await conexion.execute(
             `INSERT INTO pedidos (id_carrito, id_direccion, fecha_pedido, id_estado) VALUES (?, ?, ?, ?)`,
             [pedido.idCarrito, pedido.idDireccion, pedido.fechaPedido, pedido.idEstado]);
         return r.insertId;

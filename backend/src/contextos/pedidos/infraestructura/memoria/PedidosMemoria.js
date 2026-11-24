@@ -3,11 +3,23 @@ const Pedido = require("../../dominio/Pedido");
 const { ESTADOS_CARRITO } = require("../../../carrito/dominio/EstadosCarrito");
 const { redondearMonto } = require("../../../../compartido/dominio/validaciones");
 const { mismoId } = require("../../../../compartido/infraestructura/memoria/BaseDatosMemoria");
+const enTransaccionMemoria = require("../../../../compartido/infraestructura/memoria/enTransaccionMemoria");
 
 class PedidoRepositoryMemoria extends RepositorioPedidos {
     constructor(bd) { super(); this.bd = bd; }
 
     async guardar(p) {
+        return this.#insertarPedido(p);
+    }
+
+    guardarYCerrarCarrito(pedido, fechaNuevoCarrito) {
+        return enTransaccionMemoria(this.bd, (bd) => ({
+            idPedido: this.#insertarPedido(pedido),
+            idNuevoCarrito: GestorCarritosMemoria.cerrarYAbrirNuevoEn(bd, pedido.idCarrito, fechaNuevoCarrito),
+        }));
+    }
+
+    #insertarPedido(p) {
         return this.bd.insertar("pedidos", "id_pedido", {
             id_carrito: Number(p.idCarrito), id_direccion: Number(p.idDireccion),
             fecha_pedido: p.fechaPedido, id_estado: p.idEstado,
@@ -92,10 +104,14 @@ class GestorCarritosMemoria extends GestorCarritos {
     constructor(bd) { super(); this.bd = bd; }
 
     async cerrarYAbrirNuevo(idCarrito, fecha) {
-        const carrito = this.bd.primero("carritos", (c) => mismoId(c.id_carrito, idCarrito));
+        return GestorCarritosMemoria.cerrarYAbrirNuevoEn(this.bd, idCarrito, fecha);
+    }
+
+    static cerrarYAbrirNuevoEn(bd, idCarrito, fecha) {
+        const carrito = bd.primero("carritos", (c) => mismoId(c.id_carrito, idCarrito));
         if (!carrito) return null;
         carrito.id_estado = ESTADOS_CARRITO.CERRADO;
-        return this.bd.insertar("carritos", "id_carrito", {
+        return bd.insertar("carritos", "id_carrito", {
             fecha_creacion: fecha, id_cliente: carrito.id_cliente, id_estado: ESTADOS_CARRITO.ACTIVO,
         });
     }

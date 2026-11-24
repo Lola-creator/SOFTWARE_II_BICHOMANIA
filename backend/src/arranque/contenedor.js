@@ -44,7 +44,6 @@ const crearContenedor = ({ entorno = process.env, persistencia = crearPersistenc
         resenaService: new ResenaService(persistencia.resenas),
         pedidoService: new PedidoService({
             repositorioPedidos: persistencia.pedidos,
-            gestorCarritos: persistencia.gestorCarritos,
             monederoClientes: new MonederoClientesIdentidad(identidadService),
         }),
         generadorBoleta: new BoletaPdfKit(),

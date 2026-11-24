@@ -2,6 +2,7 @@ const PedidoService = require("../../src/contextos/pedidos/aplicacion/PedidoServ
 const Pedido = require("../../src/contextos/pedidos/dominio/Pedido");
 const { ESTADOS_PEDIDO } = require("../../src/contextos/pedidos/dominio/EstadosPedido");
 const { ErrorValidacion, ErrorNoEncontrado } = require("../../src/compartido/dominio/errores");
+const ErrorPersistencia = require("../../src/compartido/aplicacion/ErrorPersistencia");
 
 describe("PedidoService", () => {
     let pedidos, carritos, monedero, servicio;
@@ -9,7 +10,7 @@ describe("PedidoService", () => {
 
     beforeEach(() => {
         pedidos = {
-            guardar: jest.fn(), obtenerPorId: jest.fn(), guardarPago: jest.fn(), eliminar: jest.fn(),
+            guardar: jest.fn(), guardarYCerrarCarrito: jest.fn(), obtenerPorId: jest.fn(), guardarPago: jest.fn(), eliminar: jest.fn(),
             calcularTotalCarrito: jest.fn(), listarResumenPorCliente: jest.fn(), listarPagos: jest.fn(), obtenerLineasBoleta: jest.fn(),
         };
         carritos = { cerrarYAbrirNuevo: jest.fn() };
@@ -17,16 +18,36 @@ describe("PedidoService", () => {
         servicio = new PedidoService({ repositorioPedidos: pedidos, gestorCarritos: carritos, monederoClientes: monedero, obtenerFechaActual: () => HOY });
     });
 
-    test("crearDesdeCarrito guarda un pedido pendiente y abre un carrito nuevo", async () => {
-        pedidos.guardar.mockResolvedValue(11);
-        carritos.cerrarYAbrirNuevo.mockResolvedValue(21);
+    test("crearDesdeCarrito guarda un pedido pendiente y abre un carrito nuevo en una sola operacion", async () => {
+        pedidos.guardarYCerrarCarrito.mockResolvedValue({ idPedido: 11, idNuevoCarrito: 21 });
 
         const r = await servicio.crearDesdeCarrito({ id_carrito: 5, id_direccion: 2, id_estado: 5 });
 
+        const [pedido, fechaNuevoCarrito] = pedidos.guardarYCerrarCarrito.mock.calls[0];
         expect(r).toEqual({ ok: true, id_pedido: 11, nuevo_carrito: 21 });
-        expect(pedidos.guardar.mock.calls[0][0].idEstado).toBe(ESTADOS_PEDIDO.PENDIENTE_DE_PAGO);
-        expect(pedidos.guardar.mock.calls[0][0].fechaPedido).toBe("2026-11-23");
-        expect(carritos.cerrarYAbrirNuevo).toHaveBeenCalledWith(5, "2026-11-23");
+        expect(pedidos.guardarYCerrarCarrito).toHaveBeenCalledTimes(1);
+        expect(pedido.idCarrito).toBe(5);
+        expect(pedido.idEstado).toBe(ESTADOS_PEDIDO.PENDIENTE_DE_PAGO);
+        expect(pedido.fechaPedido).toBe("2026-11-23");
+        expect(fechaNuevoCarrito).toBe("2026-11-23");
+    });
+
+    test("crearDesdeCarrito no guarda el pedido por separado del cierre del carrito", async () => {
+        pedidos.guardarYCerrarCarrito.mockResolvedValue({ idPedido: 11, idNuevoCarrito: 21 });
+
+        await servicio.crearDesdeCarrito({ id_carrito: 5, id_direccion: 2 });
+
+        expect(pedidos.guardar).not.toHaveBeenCalled();
+        expect(carritos.cerrarYAbrirNuevo).not.toHaveBeenCalled();
+    });
+
+    test("crearDesdeCarrito informa el error si la operacion atomica falla", async () => {
+        pedidos.guardarYCerrarCarrito.mockRejectedValue(new Error("Deadlock"));
+
+        const resultado = servicio.crearDesdeCarrito({ id_carrito: 5, id_direccion: 2 });
+
+        await expect(resultado).rejects.toThrow(ErrorPersistencia);
+        await expect(resultado).rejects.toThrow("No se pudo crear el pedido");
     });
 
     test("registrarPago persiste el pago y devuelve la deuda restante", async () => {

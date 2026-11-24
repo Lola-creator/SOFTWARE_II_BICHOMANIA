@@ -3,6 +3,7 @@ const { exigirImplementacion } = require("../../../compartido/dominio/contratos"
 // Persistencia de pedidos y pagos
 class RepositorioPedidos {
     async guardar(pedido) { exigirImplementacion("guardar"); }                       // id nuevo
+    async guardarYCerrarCarrito(pedido, fechaNuevoCarrito) { exigirImplementacion("guardarYCerrarCarrito"); }
     async obtenerPorId(idPedido) { exigirImplementacion("obtenerPorId"); }           // Pedido (con total, pagos e idCliente) | null
     async guardarPago(pedido, pago) { exigirImplementacion("guardarPago"); }         // inserta el pago y actualiza el estado
     async eliminar(idPedido) { exigirImplementacion("eliminar"); }

@@ -150,7 +150,7 @@ export default function Encuestas() {
     try {
       const data = await encuestasApi.ganadora(id_encuesta);
 
-      if (!data || !data.opcion) {
+      if (!data?.opcion) {
         return alert("No hay votos para esta encuesta");
       }
 

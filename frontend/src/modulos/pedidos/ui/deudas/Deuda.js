@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import MetodoPago from "./MetodoPago"; 
 import PagosPedido from "./PagosPedido";
 import { pedidosApi } from "../../infraestructura/pedidosApi";

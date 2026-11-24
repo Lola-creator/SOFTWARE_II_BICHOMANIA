@@ -1,5 +1,5 @@
 
-const path = require("path");
+const path = require("node:path");
 const IdentidadService = require("../contextos/identidad/aplicacion/IdentidadService");
 const crypto = require("node:crypto");
 const HasheadorBcrypt = require("../contextos/identidad/infraestructura/HasheadorBcrypt");

@@ -86,7 +86,7 @@ export default function EditarProducto() {
       return;
     }
     const precio = Number(precioTexto);
-    if (isNaN(precio) || precio <= 0) {
+    if (Number.isNaN(precio) || precio <= 0) {
       alert("El precio debe ser mayor que 0");
       return;
     }

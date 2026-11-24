@@ -25,6 +25,12 @@
     "eject": "react-scripts eject",
     "test:selenium": "node --test --test-timeout=600000 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=test-selenium/reporte-xunit.xml test-selenium/prueba.test.js"
   },
+  "jest": {
+    "moduleNameMapper": {
+      "^react-router-dom$": "<rootDir>/node_modules/react-router-dom/dist/index.js",
+      "^react-router/dom$": "<rootDir>/node_modules/react-router/dist/development/dom-export.js"
+    }
+  },
   "eslintConfig": {
     "extends": [
       "react-app",

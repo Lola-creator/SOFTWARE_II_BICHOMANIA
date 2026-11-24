@@ -125,8 +125,8 @@ const Profile = () => {
             <p>No tienes direcciones registradas</p>
           ) : (
             <ul>
-              {direcciones.map((d, i) => (
-                <li key={i}>
+              {direcciones.map((d) => (
+                <li key={d.id_direccion}>
                   <strong>{d.calle}</strong> - {d.distrito}, {d.ciudad} ({d.nombre})
                 </li>
               ))}

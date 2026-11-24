@@ -135,7 +135,7 @@ export default function Direcciones() {
       ) : (
         <ul>
           {direcciones.map((d, i) => (
-            <li key={i}>
+            <li key={d.id_direccion}>
               <label style={{ cursor: "pointer" }}>
                 <input 
                   type="radio"

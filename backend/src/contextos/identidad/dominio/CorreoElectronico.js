@@ -1,12 +1,13 @@
 const { ErrorValidacion } = require("../../../compartido/dominio/errores");
 
+const LONGITUD_MAXIMA = 254; // RFC 5321
 const PATRON_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Objeto de valor: un correo siempre normalizado (minúsculas, sin espacios) y con formato válido
 class CorreoElectronico {
     constructor(valor) {
         const normalizado = String(valor ?? "").trim().toLowerCase();
-        if (!PATRON_CORREO.test(normalizado)) {
+        if (normalizado.length > LONGITUD_MAXIMA || !PATRON_CORREO.test(normalizado)) {
             throw new ErrorValidacion("El correo electrónico no es válido");
         }
         this.valor = normalizado;

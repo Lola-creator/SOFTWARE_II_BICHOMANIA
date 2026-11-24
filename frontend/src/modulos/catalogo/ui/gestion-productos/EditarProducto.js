@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 import { catalogoApi } from "../../infraestructura/catalogoApi";
-import { MAX_NOMBRE, PRECIO_MAX } from "../../dominio/reglasProducto";
+import { validarProducto, construirFormularioProducto } from "../../dominio/reglasProducto";
 import { urlImagenProducto } from "../../dominio/imagenProducto";
 
 const urlImagen = (img) => (img ? urlImagenProducto(img) : "");
@@ -66,53 +66,16 @@ export default function EditarProducto() {
     });
     setProductoEditado(null);
   };
-
-  const guardarCambios = async (e) => {
+    const guardarCambios = async (e) => {
     e.preventDefault();
 
-    const nombre = String(productoEditando.nombre ?? "");
-    const precioTexto = String(productoEditando.precio ?? "");
-
-    if (nombre === "" || precioTexto === "") {
-      alert("Falta llenar campos obligatorios");
+    const error = validarProducto(productoEditando);
+    if (error) {
+      alert(error);
       return;
     }
-    if (nombre.trim() === "") {
-      alert("El nombre no puede contener solo espacios");
-      return;
-    }
-    if (nombre.trim().length > MAX_NOMBRE) {
-      alert(`El nombre no puede superar ${MAX_NOMBRE} caracteres`);
-      return;
-    }
-    const precio = Number(precioTexto);
-    if (isNaN(precio) || precio <= 0) {
-      alert("El precio debe ser mayor que 0");
-      return;
-    }
-    if (precio > PRECIO_MAX) {
-      alert(`El precio no puede superar ${PRECIO_MAX}`);
-      return;
-    }
-    if (productoEditando.nuevaImagen && !productoEditando.nuevaImagen.type.startsWith("image/")) {
-      alert("El archivo debe ser una imagen");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("nombre", nombre.trim());
-
-    if (productoEditando.caracteristica && productoEditando.caracteristica.trim() !== "") {
-      formData.append("caracteristica", productoEditando.caracteristica);
-    }
-    formData.append("precio", precioTexto);
-
-    if (productoEditando.id_categoria) formData.append("id_categoria", productoEditando.id_categoria);
-    if (productoEditando.id_competencia) formData.append("id_competencia", productoEditando.id_competencia);
-    if (productoEditando.id_marca) formData.append("id_marca", productoEditando.id_marca);
-    if (productoEditando.id_equipo) formData.append("id_equipo", productoEditando.id_equipo);
-    if (productoEditando.nuevaImagen) formData.append("imagen", productoEditando.nuevaImagen);
-
+    const formData = construirFormularioProducto(productoEditando);
+  
     try {
       let data;
       try {

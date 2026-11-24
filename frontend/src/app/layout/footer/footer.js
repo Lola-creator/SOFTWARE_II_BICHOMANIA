@@ -19,34 +19,34 @@ function Footer() {
             <div className ="cuadroFila"> 
                 <span style={{color: 'white', marginLeft:'40px'}}>Servicios al cliente</span>
                 <ul>
-                    <li><a className="dorado" href="#">Contacto</a></li>
-                    <li><a className="dorado" href="#">Entrega y retorno</a></li>
-                    <li><a className="dorado" href="#">FQA</a></li>
+                    <li><button type="button" className="dorado enlace-footer">Contacto</button></li>
+                    <li><button type="button" className="dorado enlace-footer">Entrega y retorno</button></li>
+                    <li><button type="button" className="dorado enlace-footer">FQA</button></li>
                 </ul>
             </div>
             <div className ="cuadroFila"> 
                 <span style={{color: 'white', marginLeft:'40px'}} >Nuestro Equipo</span>
                 <ul>
-                    <li><a className="dorado" href="#">Rodrigo Ccallo</a></li>
-                    <li><a className="dorado" href="#">Fernanda Cruz</a></li>
-                    <li><a className="dorado" href="#">Paolo Avalos</a></li>
-                    <li><a className="dorado" href="#">Sabrina Flores</a></li>
+                    <li><button type="button" className="dorado enlace-footer">Rodrigo Ccallo</button></li>
+                    <li><button type="button" className="dorado enlace-footer">Fernanda Cruz</button></li>
+                    <li><button type="button" className="dorado enlace-footer">Paolo Avalos</button></li>
+                    <li><button type="button" className="dorado enlace-footer">Sabrina Flores</button></li>
                 </ul>
             </div>
             <div className ="cuadroFila"> 
                 <span style={{color: 'white', marginLeft:'40px'}}>Terminos legales</span>
                 <ul>
-                    <li><a className="dorado" href="#">Politicas</a></li>
-                    <li><a className="dorado" href="#">No vendas tu informacion</a></li>
+                    <li><button type="button" className="dorado enlace-footer">Politicas</button></li>
+                    <li><button type="button" className="dorado enlace-footer">No vendas tu informacion</button></li>
                 </ul>
             </div>
         </div>
         <div className = "abajo">
                 <div className="Sigue">
                     <span className="gray">Síguenos en: </span>
-                    <a className="dorado" href="#">Instagram</a>
-                    <a className="dorado" href="#">Twitter</a>
-                    <a className="dorado" href="#">YouTube</a>
+                    <button type="button" className="dorado enlace-footer">Instagram</button>
+                    <button type="button" className="dorado enlace-footer">Twitter</button>
+                    <button type="button" className="dorado enlace-footer">YouTube</button>
                 </div>
                 <div className="Tienda">
                     <span> LA TIENDA DEL BICHO</span>

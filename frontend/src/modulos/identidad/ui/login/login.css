@@ -78,7 +78,8 @@
   padding-right: 40px; /* espacio para el icono */
 }
 
-.input-password-container span {
+.input-password-container .ver-contrasena,
+.input-password-container .ver-contrasena:hover {
   position: absolute;
   right: 10px;
   top: 50%;
@@ -86,4 +87,14 @@
   cursor: pointer;
   font-size: 20px;
   color: darkgoldenrod;
+  display: inline;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  font-style: normal;
+  font-family: inherit;
+  line-height: inherit;
 }

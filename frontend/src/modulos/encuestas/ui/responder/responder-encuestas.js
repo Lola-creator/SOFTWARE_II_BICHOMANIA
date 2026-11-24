@@ -2,6 +2,19 @@ import { useEffect, useState } from "react";
 import { encuestasApi } from "../../infraestructura/encuestasApi";
 import { sesion } from "../../../../compartido/infraestructura/sesion";
 
+const ESTILO_BOTON_LISTA = {
+    display: "block",
+    width: "100%",
+    boxSizing: "border-box",
+    background: "none",
+    border: "none",
+    borderRadius: "6px",
+    font: "inherit",
+    color: "inherit",
+    textAlign: "inherit",
+    cursor: "pointer"
+};
+
 export default function ResponderEncuestas() {
     const [encuestas, setEncuestas] = useState([]);
     const [seleccionada, setSeleccionada] = useState(null);
@@ -68,16 +81,19 @@ export default function ResponderEncuestas() {
                             key={e.id_encuesta}
                             style={{
                                 marginBottom: "10px",
-                                cursor: "pointer",
-                                padding: "10px",
                                 border: "1px solid #ccc",
                                 borderRadius: "6px"
                             }}
-                            onClick={() => seleccionarEncuesta(e)}
                         >
-                            <strong>{e.descripcion}</strong>
-                            <br />
-                            <small>{e.fecha_inicio} → {e.fecha_fin}</small>
+                            <button
+                                type="button"
+                                style={{ ...ESTILO_BOTON_LISTA, padding: "10px" }}
+                                onClick={() => seleccionarEncuesta(e)}
+                            >
+                                <strong>{e.descripcion}</strong>
+                                <br />
+                                <small>{e.fecha_inicio} → {e.fecha_fin}</small>
+                            </button>
                         </li>
                     ))}
                 </ul>
@@ -94,17 +110,20 @@ export default function ResponderEncuestas() {
                             <li
                                 key={d.id_detalle}
                                 style={{
-                                    padding: "12px",
                                     marginTop: "10px",
                                     border: "1px solid #aaa",
-                                    borderRadius: "6px",
-                                    cursor: "pointer"
+                                    borderRadius: "6px"
                                 }}
-                                onClick={() => votar(d)}
                             >
-                                <strong>{d.opcion_equipo}</strong> – {d.opcion_liga}
-                                <br />
-                                <small>{d.categoria}</small>
+                                <button
+                                    type="button"
+                                    style={{ ...ESTILO_BOTON_LISTA, padding: "12px" }}
+                                    onClick={() => votar(d)}
+                                >
+                                    <strong>{d.opcion_equipo}</strong> – {d.opcion_liga}
+                                    <br />
+                                    <small>{d.categoria}</small>
+                                </button>
                             </li>
                         ))}
                     </ul>

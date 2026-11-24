@@ -109,6 +109,7 @@ export default function EliminarProducto() {
           >
             <img
               src={urlImagenProducto(p.imagen)}
+              alt={p.nombre_producto}
               style={{ width: "100%", height: "150px", objectFit: "cover" }}
             />
 

@@ -73,8 +73,10 @@ export default function Resenas({ idProducto }) {
           style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
         />
 
-        <label>Puntuación:</label>
+        <label id="etiqueta-puntuacion" htmlFor="puntuacion-resena">Puntuación:</label>
         <StarRating
+          id="puntuacion-resena"
+          idEtiqueta="etiqueta-puntuacion"
           rating={nueva.puntuacion}
           setRating={(value) => setNueva({ ...nueva, puntuacion: value })}
         />

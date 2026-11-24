@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const { crearOpcionesCors } = require("../compartido/http/opcionesCors");
 const crearRutasIdentidad = require("../contextos/identidad/http/rutasIdentidad");
 const crearRutasCatalogo = require("../contextos/catalogo/http/rutasCatalogo");
 const crearRutasCarrito = require("../contextos/carrito/http/rutasCarrito");
@@ -11,7 +12,7 @@ const crearRutasEncuestas = require("../contextos/encuestas/http/rutasEncuestas"
 // Arma la aplicación Express a partir del contenedor (sin abrir el puerto: útil para pruebas)
 const crearApp = (contenedor) => {
     const app = express();
-    app.use(cors());
+    app.use(cors(crearOpcionesCors()));  
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use("/uploads", express.static(contenedor.directorioImagenes));
@@ -24,7 +25,7 @@ const crearApp = (contenedor) => {
             res.status(500).json({ error: error.message });
         }
     });
-
+    
     app.use(crearRutasIdentidad(contenedor));
     app.use(crearRutasCatalogo(contenedor));
     app.use(crearRutasCarrito(contenedor));

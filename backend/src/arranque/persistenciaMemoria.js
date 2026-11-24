@@ -1,4 +1,3 @@
-// Adaptadores en memoria: permiten correr la app y las pruebas sin base de datos
 const { BaseDatosMemoria } = require("../compartido/infraestructura/memoria/BaseDatosMemoria");
 const { ClienteRepositoryMemoria, EmpleadoRepositoryMemoria } = require("../contextos/identidad/infraestructura/memoria/IdentidadMemoria");
 const { ProductoRepositoryMemoria, ClasificacionRepositoryMemoria } = require("../contextos/catalogo/infraestructura/memoria/CatalogoMemoria");

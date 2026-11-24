@@ -1,4 +1,4 @@
-import { pedir, consulta, urlDe } from "../../../compartido/infraestructura/clienteHttp";
+import { pedir, consulta, descargar } from "../../../compartido/infraestructura/clienteHttp";
 
 export const pedidosApi = {
   crear: (datos) => pedir("/pedido/crear", { metodo: "POST", cuerpo: datos }),
@@ -9,5 +9,5 @@ export const pedidosApi = {
   pagos: (idPedido) => pedir(`/pagos/${idPedido}`),
   deudas: (idCliente) => pedir(`/deudas/${idCliente}`),
   compras: (idCliente) => pedir(`/compras/${idCliente}`),
-  urlBoleta: (idPedido) => urlDe(`/boleta/${idPedido}`),
+  boleta: (idPedido) => descargar(`/boleta/${idPedido}`),
 };

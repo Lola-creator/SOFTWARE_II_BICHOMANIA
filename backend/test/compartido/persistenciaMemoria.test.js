@@ -1,5 +1,4 @@
-// Prueba de integración de la capa de aplicación con los adaptadores EN MEMORIA:
-// recorre el flujo completo de compra sin base de datos.
+
 const { crearContenedor } = require("../../src/arranque/contenedor");
 const { crearPersistenciaMemoria, sembrarDatosDemo } = require("../../src/arranque/persistenciaMemoria");
 

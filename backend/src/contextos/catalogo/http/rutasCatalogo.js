@@ -1,17 +1,18 @@
 const express = require("express");
 const multer = require("multer");
-const path = require("path");
+const { generarNombreImagen, esImagenPermitida } 
+= require("../infraestructura/almacenamiento/nombreImagen");
 const { responderCasoDeUso } = require("../../../compartido/http/responderCasoDeUso");
 const { ErrorValidacion } = require("../../../compartido/dominio/errores");
 
 const crearSubidaImagenes = (directorio) => multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => cb(null, directorio),
-        filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname)),
+        filename: (req, file, cb) => cb(null, generarNombreImagen(file.mimetype)),
     }),
     limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
-        if (!file.mimetype.startsWith("image/")) {
+        if (!esImagenPermitida(file.mimetype)) {
             req.archivoInvalido = true;
             return cb(null, false);
         }

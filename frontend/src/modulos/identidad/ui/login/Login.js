@@ -18,10 +18,10 @@ export default function Login({ tipo }) {
     try {
       if (tipo === "user") {
         const msg = await identidadApi.loginCliente(datos);
-        sesion.iniciarCliente(msg.usuario);
+        sesion.iniciarCliente(msg.usuario, msg.token);
       } else {
         const msg = await identidadApi.loginEmpleado(datos);
-        sesion.iniciarEmpleado(msg.empleado);
+        sesion.iniciarEmpleado(msg.empleado, msg.token);
       }
 
 

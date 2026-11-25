@@ -42,7 +42,7 @@ export default function MetodoPago({ id_pedido, id_carrito, onPagoExitoso}) {
       if ((tarjeta.numero || "").length !== 16) e.numero = "Tarjeta inválida";
       if ((tarjeta.nombre || "").length < 3) e.nombre = "Nombre inválido";
       if (!((tarjeta.correo || "").includes("@"))) e.correo = "Correo inválido";
-      if (!/^[0-9]{2}\/[0-9]{2}$/.test(tarjeta.fecha)) e.fecha = "Formato MM/YY";
+      if (!/^\d{2}\/\d{2}$/.test(tarjeta.fecha)) e.fecha = "Formato MM/YY";
       if ((tarjeta.cvv || "").length !== 3) e.cvv = "CVV inválido";
     }
 

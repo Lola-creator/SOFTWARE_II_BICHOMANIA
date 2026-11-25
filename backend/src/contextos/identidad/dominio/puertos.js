@@ -20,4 +20,10 @@ class Hasheador {
     async comparar(texto, hash) { exigirImplementacion("comparar"); }
 }
 
-module.exports = { RepositorioClientes, RepositorioEmpleados, Hasheador };
+// Puerto: emisión y verificación de tokens de sesión (HMAC en infraestructura)
+class EmisorTokens {
+    emitir(datosSesion) { exigirImplementacion("emitir"); }   // devuelve el token (string)
+    verificar(token) { exigirImplementacion("verificar"); }   // devuelve datosSesion o lanza ErrorCredenciales
+}
+
+module.exports = { RepositorioClientes, RepositorioEmpleados, Hasheador, EmisorTokens };

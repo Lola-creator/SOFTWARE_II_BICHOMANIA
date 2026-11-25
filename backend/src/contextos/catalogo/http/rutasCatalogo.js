@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require("multer");
-const path = require("path");
+const path = require("node:path");
 const { responderCasoDeUso } = require("../../../compartido/http/responderCasoDeUso");
 const { ErrorValidacion } = require("../../../compartido/dominio/errores");
 

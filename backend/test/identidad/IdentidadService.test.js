@@ -5,7 +5,7 @@ const { ErrorValidacion, ErrorNoEncontrado, ErrorCredenciales } = require("../..
 const ErrorPersistencia = require("../../src/compartido/aplicacion/ErrorPersistencia");
 
 describe("IdentidadService", () => {
-    let clientes, empleados, hasheador, servicio;
+    let clientes, empleados, hasheador, emisorTokens, servicio;
     const registro = {
         nombre: "Ana", apellido_paterno: "Pérez", telefono: "987654321",
         correo_electronico: "ana@gmail.com", dni: "12345678", contrasena: "Secreta123",
@@ -19,7 +19,8 @@ describe("IdentidadService", () => {
         clientes = { guardar: jest.fn(), buscarPorCorreo: jest.fn(), buscarPorId: jest.fn(), listar: jest.fn(), actualizarSaldo: jest.fn() };
         empleados = { buscarPorCorreo: jest.fn() };
         hasheador = { hashear: jest.fn().mockResolvedValue("HASH"), comparar: jest.fn() };
-        servicio = new IdentidadService({ repositorioClientes: clientes, repositorioEmpleados: empleados, hasheador });
+        emisorTokens = { emitir: jest.fn().mockReturnValue("TOKEN-FIRMADO"), verificar: jest.fn() };
+        servicio = new IdentidadService({ repositorioClientes: clientes, repositorioEmpleados: empleados, hasheador, emisorTokens });
     });
 
     describe("registrarCliente", () => {
@@ -58,7 +59,28 @@ describe("IdentidadService", () => {
             clientes.buscarPorCorreo.mockResolvedValue(clienteGuardado());
             hasheador.comparar.mockResolvedValue(true);
             const r = await servicio.iniciarSesionCliente({ correo: "ANA@gmail.com", password: "x" });
-            expect(r).toEqual({ message: "Login exitoso", usuario: { id: 1, nombre: "Ana", correo: "ana@gmail.com", rol: "cliente" } });
+            expect(r).toEqual({
+                message: "Login exitoso",
+                usuario: { id: 1, nombre: "Ana", correo: "ana@gmail.com", rol: "cliente" },
+                token: "TOKEN-FIRMADO",
+            });
+        });
+
+        test("cliente: el token se emite con los datos de su sesión", async () => {
+            clientes.buscarPorCorreo.mockResolvedValue(clienteGuardado());
+            hasheador.comparar.mockResolvedValue(true);
+
+            await servicio.iniciarSesionCliente({ correo: "ana@gmail.com", password: "x" });
+
+            expect(emisorTokens.emitir).toHaveBeenCalledWith({ id: 1, nombre: "Ana", correo: "ana@gmail.com", rol: "cliente" });
+        });
+
+        test("no emite token si la contraseña es incorrecta", async () => {
+            clientes.buscarPorCorreo.mockResolvedValue(clienteGuardado());
+            hasheador.comparar.mockResolvedValue(false);
+
+            await expect(servicio.iniciarSesionCliente({ correo: "ana@gmail.com", password: "x" })).rejects.toThrow(ErrorCredenciales);
+            expect(emisorTokens.emitir).not.toHaveBeenCalled();
         });
 
         test("cliente inexistente → ErrorNoEncontrado", async () => {
@@ -82,6 +104,8 @@ describe("IdentidadService", () => {
             hasheador.comparar.mockResolvedValue(true);
             const r = await servicio.iniciarSesionEmpleado({ correo: "a@b.com", password: "x" });
             expect(r.empleado).toEqual({ id: 2, nombre: "Admin", correo: "a@b.com", cargo: "Jefe", rol: "empleado" });
+            expect(r.token).toBe("TOKEN-FIRMADO");
+            expect(emisorTokens.emitir).toHaveBeenCalledWith(r.empleado);
         });
     });
 

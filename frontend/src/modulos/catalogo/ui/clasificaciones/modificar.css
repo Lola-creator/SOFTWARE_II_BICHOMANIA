@@ -52,7 +52,7 @@
   margin-left: 10%; 
 }
 .lista button{
-    background-color: red;
+    background-color: #c62828; /* rojo accesible (5.6:1 con texto blanco) */
     font-size: 15px;
     color:white;
     border-radius: 5px;

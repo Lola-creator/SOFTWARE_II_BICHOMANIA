@@ -9,7 +9,7 @@ const validarNombre = (nombre) => {
 
 const validarPrecio = (precio) => {
     if (precio === undefined || precio === null || precio === "" ||
-        isNaN(precio) || Number(precio) <= 0) {
+        Number.isNaN(Number(precio)) || Number(precio) <= 0) {
         throw new ErrorValidacion("El precio debe ser un número mayor a 0");
     }
     return Number(precio);
@@ -40,7 +40,7 @@ class Producto {
 
     aplicarDescuento(porcentaje) {
         const p = Number(porcentaje);
-        if (isNaN(p) || p <= 0 || p >= 100) {
+        if (Number.isNaN(p) || p <= 0 || p >= 100) {
             throw new ErrorValidacion("El descuento debe estar entre 0 y 100");
         }
         this.precio = Number((this.precio * (1 - p / 100)).toFixed(2));

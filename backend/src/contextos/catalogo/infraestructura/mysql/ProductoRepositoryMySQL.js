@@ -1,6 +1,9 @@
 const RepositorioProducto = require("../../dominio/RepositorioProducto");
 const Producto = require("../../dominio/Producto");
 const ErrorPersistencia = require("../../../../compartido/aplicacion/ErrorPersistencia");
+const enTransaccion = require("../../../../compartido/infraestructura/mysql/enTransaccion");
+
+const TABLAS_RELACIONADAS = ["equipos_productos", "marcas_productos"];
 
 class ProductoRepository extends RepositorioProducto {
   constructor(dbp) {
@@ -72,9 +75,13 @@ class ProductoRepository extends RepositorioProducto {
 
   async eliminar(idProducto) {
     try {
-      await this.dbp.query("DELETE FROM equipos_productos WHERE id_producto = ?", [idProducto]);
-      await this.dbp.query("DELETE FROM marcas_productos WHERE id_producto = ?", [idProducto]);
-      await this.dbp.query("DELETE FROM productos WHERE id_producto = ?", [idProducto]);
+      // Todo o nada: si falla un DELETE, se revierte y no quedan relaciones huérfanas
+      await enTransaccion(this.dbp, async (transaccion) => {
+        for (const tabla of TABLAS_RELACIONADAS) {
+          await transaccion.query(`DELETE FROM ${tabla} WHERE id_producto = ?`, [idProducto]);
+        }
+        await transaccion.query("DELETE FROM productos WHERE id_producto = ?", [idProducto]);
+      });
     } catch (e) {
       console.error(e);
       throw new ErrorPersistencia("Error al eliminar producto");

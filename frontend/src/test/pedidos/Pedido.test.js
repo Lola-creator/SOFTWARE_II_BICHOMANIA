@@ -3,6 +3,7 @@ import { MemoryRouter } from "react-router-dom";
 import Pedido from "../../modulos/pedidos/ui/checkout/Pedido";
 import { ubicacionesApi } from "../../modulos/ubicaciones/infraestructura/ubicacionesApi";
 import { claveReact } from "../apoyo/claveReact";
+import { crearToken } from "../apoyo/crearToken";
 
 jest.mock("../../modulos/ubicaciones/infraestructura/ubicacionesApi", () => ({
   ubicacionesApi: { direcciones: jest.fn(), paises: jest.fn(), ciudades: jest.fn(), agregarDireccion: jest.fn() },
@@ -13,7 +14,7 @@ jest.mock("../../modulos/pedidos/infraestructura/pedidosApi", () => ({
 
 describe("Pedido checkout", () => {
   beforeEach(() => {
-    localStorage.setItem("id_usuario", "4");
+    localStorage.setItem("token", crearToken({ id: 4, rol: "cliente" }));
   });
 
   afterEach(() => {

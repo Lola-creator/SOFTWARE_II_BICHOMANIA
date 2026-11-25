@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import ResponderEncuestas from "../../modulos/encuestas/ui/responder/responder-encuestas";
 import { encuestasApi } from "../../modulos/encuestas/infraestructura/encuestasApi";
+import { crearToken } from "../apoyo/crearToken";
 
 jest.mock("../../modulos/encuestas/infraestructura/encuestasApi", () => ({
   encuestasApi: { activas: jest.fn(), yaVoto: jest.fn(), detalles: jest.fn(), votar: jest.fn() },
@@ -8,7 +9,7 @@ jest.mock("../../modulos/encuestas/infraestructura/encuestasApi", () => ({
 
 describe("ResponderEncuestas", () => {
   beforeEach(() => {
-    localStorage.setItem("id_usuario", "4");
+    localStorage.setItem("token", crearToken({ id: 4, rol: "cliente" }));
     window.alert = jest.fn();
     encuestasApi.activas.mockResolvedValue([
       { id_encuesta: 1, descripcion: "¿Cual es tu equipo favorito?", fecha_inicio: "2026-10-01", fecha_fin: "2026-10-31" },

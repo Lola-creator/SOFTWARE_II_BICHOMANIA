@@ -1,7 +1,7 @@
 const PedidoService = require("../../src/contextos/pedidos/aplicacion/PedidoService");
 const Pedido = require("../../src/contextos/pedidos/dominio/Pedido");
 const { ESTADOS_PEDIDO } = require("../../src/contextos/pedidos/dominio/EstadosPedido");
-const { ErrorValidacion, ErrorNoEncontrado } = require("../../src/compartido/dominio/errores");
+const { ErrorValidacion, ErrorNoEncontrado, ErrorNoAutorizado } = require("../../src/compartido/dominio/errores");
 const ErrorPersistencia = require("../../src/compartido/aplicacion/ErrorPersistencia");
 
 describe("PedidoService", () => {
@@ -70,7 +70,7 @@ describe("PedidoService", () => {
 
     test("anular elimina el pedido y devuelve lo pagado al saldo del cliente", async () => {
         pedidos.obtenerPorId.mockResolvedValue(new Pedido({ id: 1, idCarrito: 3, idCliente: 8, total: 100, pagos: [{ metodoPago: "yape", monto: 30 }] }));
-        const r = await servicio.anular("1");
+        const r = await servicio.anular("1", { id: 8, rol: "cliente" });
         expect(r).toEqual({ ok: true, mensaje: "Pedido eliminado correctamente", devuelto_al_saldo: 30 });
         expect(pedidos.eliminar).toHaveBeenCalledWith(1);
         expect(monedero.abonar).toHaveBeenCalledWith(8, 30);
@@ -78,8 +78,27 @@ describe("PedidoService", () => {
 
     test("anular un pedido sin pagos no toca el saldo", async () => {
         pedidos.obtenerPorId.mockResolvedValue(new Pedido({ id: 1, idCarrito: 3, idCliente: 8, total: 100 }));
-        await servicio.anular(1);
+        await servicio.anular(1, { id: 8, rol: "cliente" });
         expect(monedero.abonar).not.toHaveBeenCalled();
+    });
+
+    test("anular un pedido de otro cliente se rechaza sin eliminar ni devolver saldo", async () => {
+        pedidos.obtenerPorId.mockResolvedValue(new Pedido({ id: 1, idCarrito: 3, idCliente: 8, total: 100, pagos: [{ metodoPago: "yape", monto: 30 }] }));
+
+        const resultado = servicio.anular(1, { id: 9, rol: "cliente" });
+
+        await expect(resultado).rejects.toThrow(ErrorNoAutorizado);
+        expect(pedidos.eliminar).not.toHaveBeenCalled();
+        expect(monedero.abonar).not.toHaveBeenCalled();
+    });
+
+    test("anular sin usuario autenticado se rechaza", async () => {
+        pedidos.obtenerPorId.mockResolvedValue(new Pedido({ id: 1, idCarrito: 3, idCliente: 8, total: 100 }));
+
+        const resultado = servicio.anular(1);
+
+        await expect(resultado).rejects.toThrow(ErrorNoAutorizado);
+        expect(pedidos.eliminar).not.toHaveBeenCalled();
     });
 
     test("deudaDeCarrito exige id_carrito", async () => {

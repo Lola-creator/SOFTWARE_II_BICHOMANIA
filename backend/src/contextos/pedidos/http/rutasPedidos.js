@@ -6,7 +6,7 @@ const crearRutasPedidos = ({ pedidoService, generadorBoleta }) => {
     const json = { formatoError: "json", respuesta: "json" };
 
     rutas.post("/pedido/crear", responderCasoDeUso((req) => pedidoService.crearDesdeCarrito(req.body), json));
-    rutas.delete("/pedido/eliminar/:id_pedido", responderCasoDeUso((req) => pedidoService.anular(req.params.id_pedido), json));
+    rutas.delete("/pedido/eliminar/:id_pedido", responderCasoDeUso((req) => pedidoService.anular(req.params.id_pedido, req.usuario), json));
 
     rutas.get("/deuda", responderCasoDeUso((req) => pedidoService.deudaDeCarrito(req.query.id_carrito), json));
     rutas.get("/deudas/:id_cliente", responderCasoDeUso((req) => pedidoService.listarDeudas(req.params.id_cliente), json));

@@ -61,8 +61,9 @@ class PedidoService {
     }
 
     // Elimina el pedido y devuelve al saldo del cliente lo que ya había pagado
-    async anular(idPedido) {
+    async anular(idPedido, usuario) {
         const pedido = await this.#obtener(idPedido, "Error eliminando pedido");
+        pedido.verificarPropietario(usuario?.id);
         const devolver = pedido.montoADevolverAlAnular();
         await ejecutar(() => this.pedidos.eliminar(pedido.id), "Error eliminando pedido");
         if (devolver > 0) {

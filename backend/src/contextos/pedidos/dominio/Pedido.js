@@ -1,6 +1,6 @@
 const Pago = require("./Pago");
 const { ESTADOS_PEDIDO } = require("./EstadosPedido");
-const { ErrorValidacion } = require("../../../compartido/dominio/errores");
+const { ErrorValidacion, ErrorNoAutorizado } = require("../../../compartido/dominio/errores");
 const { validarIdentificador, redondearMonto } = require("../../../compartido/dominio/validaciones");
 
 /**
@@ -63,6 +63,13 @@ class Pedido {
     // Al anular un pedido se devuelve al cliente todo lo que ya pagó
     montoADevolverAlAnular() {
         return this.pagado;
+    }
+
+    verificarPropietario(idCliente) {
+        const sinCliente = idCliente === undefined || idCliente === null || idCliente === "";
+        if (sinCliente || String(idCliente) !== String(this.idCliente)) {
+            throw new ErrorNoAutorizado("No puedes anular un pedido de otro cliente");
+        }
     }
 }
 

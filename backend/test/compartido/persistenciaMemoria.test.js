@@ -35,7 +35,8 @@ describe("Flujo de compra con persistencia en memoria", () => {
         await c.pedidoService.registrarPago({ id_pedido, metodo_pago: "yape", monto: 100 });
         expect(await c.pedidoService.listarDeudas(id_cliente)).toMatchObject([{ id_pedido, total: 399.8, pagado: 100 }]);
 
-        const anulado = await c.pedidoService.anular(id_pedido);
+        await expect(c.pedidoService.anular(id_pedido, { id: id_cliente + 100, rol: "cliente" })).rejects.toThrow("No puedes anular un pedido de otro cliente");
+        const anulado = await c.pedidoService.anular(id_pedido, { id: id_cliente, rol: "cliente" });
         expect(anulado.devuelto_al_saldo).toBe(100);
         await expect(c.identidadService.obtenerPerfil(String(id_cliente))).resolves.toMatchObject({ saldo: 100 });
     });

@@ -1,7 +1,7 @@
 const Pedido = require("../../src/contextos/pedidos/dominio/Pedido");
 const Boleta = require("../../src/contextos/pedidos/dominio/Boleta");
 const { ESTADOS_PEDIDO } = require("../../src/contextos/pedidos/dominio/EstadosPedido");
-const { ErrorValidacion } = require("../../src/compartido/dominio/errores");
+const { ErrorValidacion, ErrorNoAutorizado } = require("../../src/compartido/dominio/errores");
 
 describe("Pedido", () => {
     const pedido = (extra = {}) => new Pedido({ id: 1, idCarrito: 3, total: 100, ...extra });
@@ -45,6 +45,39 @@ describe("Pedido", () => {
 
     test("al anular devuelve lo pagado", () => {
         expect(pedido({ pagos: [{ metodoPago: "yape", monto: 25 }] }).montoADevolverAlAnular()).toBe(25);
+    });
+
+    test("verificarPropietario acepta al cliente dueño del pedido", () => {
+        const p = pedido({ idCliente: 8 });
+
+        const verificar = () => p.verificarPropietario(8);
+
+        expect(verificar).not.toThrow();
+    });
+
+    test("verificarPropietario acepta el id del cliente aunque llegue como texto", () => {
+        const p = pedido({ idCliente: 8 });
+
+        const verificar = () => p.verificarPropietario("8");
+
+        expect(verificar).not.toThrow();
+    });
+
+    test("verificarPropietario rechaza a otro cliente con ErrorNoAutorizado", () => {
+        const p = pedido({ idCliente: 8 });
+
+        const verificar = () => p.verificarPropietario(9);
+
+        expect(verificar).toThrow(ErrorNoAutorizado);
+        expect(verificar).toThrow("No puedes anular un pedido de otro cliente");
+    });
+
+    test.each([undefined, null, ""])("verificarPropietario rechaza si no hay cliente (%p)", (idCliente) => {
+        const p = pedido({ idCliente: 8 });
+
+        const verificar = () => p.verificarPropietario(idCliente);
+
+        expect(verificar).toThrow(ErrorNoAutorizado);
     });
 });
 

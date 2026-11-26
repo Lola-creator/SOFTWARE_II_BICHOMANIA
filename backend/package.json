@@ -16,10 +16,30 @@
     "start": "node index.js",
     "test": "jest",
     "start:local": "cross-env ENV_FILE=.env.local node index.js",
-    "start:memoria": "cross-env PERSISTENCIA=memoria node index.js"
+    "start:memoria": "cross-env PERSISTENCIA=memoria node index.js",
+    "test:ci": "jest --ci --coverage --reporters=default --reporters=jest-junit"
   },
   "devDependencies": {
     "cross-env": "^10.1.0",
-    "jest": "^30.5.2"
+    "jest": "^30.5.2",
+    "jest-junit": "^16.0.0",
+    "serve": "^14.2.8"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/test/**/*.test.js"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/pruebas_funcionales_"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "coverageReporters": [
+      "lcov",
+      "text-summary"
+    ]
   }
 }

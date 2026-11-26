@@ -1,6 +1,0 @@
-projectKey=bicho
-serverUrl=http://localhost:9000
-serverVersion=26.9.0.129388
-dashboardUrl=http://localhost:9000/dashboard?id=bicho
-ceTaskId=8d6e0138-cd4a-4f3e-bcd9-762094677838
-ceTaskUrl=http://localhost:9000/api/ce/task?id=8d6e0138-cd4a-4f3e-bcd9-762094677838

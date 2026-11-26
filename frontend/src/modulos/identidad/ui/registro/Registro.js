@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './registro.css'
-import { identidadApi } from "../../infraestructura/identidadApi";
-import { validarRegistro } from "../../dominio/reglasRegistro";
+import { registrarCliente as registrar } from "../../aplicacion/registrarCliente";
 export default function Registro() {
   const [cliente, setCliente] = useState({
     correo_electronico: "",
@@ -21,33 +20,11 @@ export default function Registro() {
     });
   };
 
-  const validar = () => {
-    const error = validarRegistro(cliente);
-    if (error) {
-      alert(error);
-      return false;
-    }
-    return true;
-  };
-
-
-  const registrarCliente = (e) => {
+  const registrarCliente = async (e) => {
     e.preventDefault(); // evita recargar la página
-    if (!validar()) return;
-    identidadApi.registrar(cliente)
-      .then((msg) => {
-        alert(msg.message);
-        console.log("Enviado:", cliente);
-        
-        navigate("/login-user");
-
-
-      })
-      .catch(err => {
-        alert(err.message);
-        console.error("ERROR FRONT:", err);
-      });
-
+    const { ok, mensaje } = await registrar(cliente);
+    alert(mensaje);
+    if (ok) navigate("/login-user");
   };
 
   return (

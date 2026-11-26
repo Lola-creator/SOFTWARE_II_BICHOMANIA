@@ -69,3 +69,11 @@
 .blue{
     color:white;
 }
+.enlace-footer{
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+}

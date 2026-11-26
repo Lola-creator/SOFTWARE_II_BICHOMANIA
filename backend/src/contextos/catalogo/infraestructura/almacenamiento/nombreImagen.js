@@ -1,7 +1,7 @@
-const crypto = require("crypto");
+const crypto = require("node:crypto");
 const { ErrorValidacion } = require("../../../../compartido/dominio/errores");
 
-// Solo estos tipos de imagen son válidos; la extensión sale de aquí, nunca del nombre original.
+
 const EXTENSIONES_PERMITIDAS = {
     "image/jpeg": "jpg",
     "image/png": "png",

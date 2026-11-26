@@ -10,8 +10,8 @@
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 .content button{
-    border: solid darkgoldenrod;
-    background-color:darkgoldenrod;
+    border: solid #8b6508;
+    background-color: #8b6508; /* dorado oscuro accesible (5.3:1 con texto blanco) */
     color: white;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     font-size: 3vw;

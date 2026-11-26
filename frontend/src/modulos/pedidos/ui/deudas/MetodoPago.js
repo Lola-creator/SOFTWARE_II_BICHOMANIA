@@ -79,12 +79,12 @@ export default function MetodoPago({ id_pedido, id_carrito, onPagoExitoso }) {
 
       <div className="space-y-2">
         <label>
-          <input type="radio" name="mp" value="paypal" onChange={() => setMetodo("paypal")} />
+          <input type="radio" name="mp" value="paypal" onChange={() => setMetodo("paypal")} />{" "}
           PayPal
         </label>
         <br />
         <label>
-          <input type="radio" name="mp" value="tarjeta" onChange={() => setMetodo("tarjeta")} />
+          <input type="radio" name="mp" value="tarjeta" onChange={() => setMetodo("tarjeta")} />{" "}
           Tarjeta
         </label>
       </div>

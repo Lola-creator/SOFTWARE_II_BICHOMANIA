@@ -16,10 +16,11 @@ const aPerfil = (cliente) => ({
 });
 
 class IdentidadService {
-    constructor({ repositorioClientes, repositorioEmpleados, hasheador }) {
+    constructor({ repositorioClientes, repositorioEmpleados, hasheador, emisorTokens }) {
         this.clientes = repositorioClientes;
         this.empleados = repositorioEmpleados;
         this.hasheador = hasheador;
+        this.emisorTokens = emisorTokens;
     }
 
     async registrarCliente({ nombre, apellido_paterno, telefono, correo_electronico, dni, contrasena } = {}) {
@@ -44,14 +45,16 @@ class IdentidadService {
         const cliente = await this.#buscarPorCorreo(this.clientes, correo);
         if (!cliente) throw new ErrorNoEncontrado("Usuario no encontrado");
         await this.#verificarContrasena(password, cliente.contrasenaHash);
-        return { message: "Login exitoso", usuario: cliente.sesion() };
+        const usuario = cliente.sesion();
+        return { message: "Login exitoso", usuario, token: this.emisorTokens.emitir(usuario) };
     }
 
     async iniciarSesionEmpleado({ correo, password } = {}) {
         const empleado = await this.#buscarPorCorreo(this.empleados, correo);
         if (!empleado) throw new ErrorNoEncontrado("Empleado no encontrado");
         await this.#verificarContrasena(password, empleado.contrasenaHash);
-        return { message: "Login de empleado exitoso", empleado: empleado.sesion() };
+        const datosEmpleado = empleado.sesion();
+        return { message: "Login de empleado exitoso", empleado: datosEmpleado, token: this.emisorTokens.emitir(datosEmpleado) };
     }
 
     async obtenerPerfil(idCliente) {

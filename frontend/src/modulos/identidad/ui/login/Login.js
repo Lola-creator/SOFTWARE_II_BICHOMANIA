@@ -18,10 +18,10 @@ export default function Login({ tipo }) {
     try {
       if (tipo === "user") {
         const msg = await identidadApi.loginCliente(datos);
-        sesion.iniciarCliente(msg.usuario);
+        sesion.iniciarCliente(msg.usuario, msg.token);
       } else {
         const msg = await identidadApi.loginEmpleado(datos);
-        sesion.iniciarEmpleado(msg.empleado);
+        sesion.iniciarEmpleado(msg.empleado, msg.token);
       }
 
 
@@ -64,7 +64,10 @@ export default function Login({ tipo }) {
               value={datos.password}
               onChange={actualizar}
             />
-            <span
+            <button
+              type="button"
+              className="ver-contrasena"
+              aria-label={mostrarPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
               onClick={() => setMostrarPassword(!mostrarPassword)}
               style={{
                 position: "absolute",
@@ -76,7 +79,7 @@ export default function Login({ tipo }) {
               }}
             >
               {mostrarPassword ? "🙈" : "👁️"}
-            </span>
+            </button>
           </div>
             <button type="submit">Ingresar</button>
           </form>

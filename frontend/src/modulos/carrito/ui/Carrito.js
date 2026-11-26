@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import './carrito.css';
+import { useNavigate } from "react-router-dom";
 import { carritoApi } from "../infraestructura/carritoApi";
 import { sesion } from "../../../compartido/infraestructura/sesion";
 export default function Carrito() {

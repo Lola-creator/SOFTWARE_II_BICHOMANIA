@@ -1,5 +1,5 @@
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 // Adaptador: guarda/borra las imágenes de productos en una carpeta local (/uploads)
 class AlmacenImagenesDisco {

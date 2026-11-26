@@ -26,6 +26,15 @@
     "test:selenium": "node --test --test-timeout=600000 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=test-selenium/reporte-xunit.xml test-selenium/prueba.test.js",
     "test:ci": "react-scripts test --watchAll=false --ci --coverage --reporters=default --reporters=jest-junit"
   },
+    "jest": {
+    "collectCoverageFrom": ["src/**/*.js", "!src/index.js", "!src/reportWebVitals.js", "!src/setupTests.js"],
+    "coverageReporters": ["lcov", "text-summary"],
+    "moduleNameMapper": {
+      "^react-router-dom$": "<rootDir>/node_modules/react-router-dom/dist/index.js",
+      "^react-router/dom$": "<rootDir>/node_modules/react-router/dist/development/dom-export.js",
+      "^react-router$": "<rootDir>/node_modules/react-router/dist/development/index.js"
+    }
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -49,17 +58,5 @@
     "@types/node": "^26.6.6",
     "jest-junit": "^16.0.0",
     "serve": "^14.2.8"
-  },
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.js",
-      "!src/index.js",
-      "!src/reportWebVitals.js",
-      "!src/setupTests.js"
-    ],
-    "coverageReporters": [
-      "lcov",
-      "text-summary"
-    ]
   }
 }

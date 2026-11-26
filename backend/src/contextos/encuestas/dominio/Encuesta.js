@@ -95,9 +95,15 @@ class Encuesta {
   // Opción con más votos (en empate gana la primera)
   ganadora() {
     if (this.#opciones.length === 0) {
-      return { opcion: null, votos: 0 };
+      throw new ErrorValidacion(
+        "La encuesta no tiene opciones para elegir una ganadora",
+      );
     }
-    const mejor = this.#opciones.reduce((a, b) => (b.votos > a.votos ? b : a));
+    const [primera, ...resto] = this.#opciones;
+    const mejor = resto.reduce(
+      (actual, opcion) => (opcion.votos > actual.votos ? opcion : actual),
+      primera,
+    );
     return { opcion: mejor.etiqueta(), votos: mejor.votos };
   }
 

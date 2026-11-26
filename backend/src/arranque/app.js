@@ -8,14 +8,20 @@ const crearRutasUbicaciones = require("../contextos/ubicaciones/http/rutasUbicac
 const crearRutasResenas = require("../contextos/resenas/http/rutasResenas");
 const crearRutasPedidos = require("../contextos/pedidos/http/rutasPedidos");
 const crearRutasEncuestas = require("../contextos/encuestas/http/rutasEncuestas");
+const { crearPoliticaAcceso } = require("../compartido/http/politicaAcceso");
+const { RUTAS_PUBLICAS, RUTAS_SOLO_EMPLEADOS } = require("./reglasAcceso");
 
-// Arma la aplicación Express a partir del contenedor (sin abrir el puerto: útil para pruebas)
 const crearApp = (contenedor) => {
     const app = express();
     app.use(cors(crearOpcionesCors()));  
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use("/uploads", express.static(contenedor.directorioImagenes));
+    app.use(crearPoliticaAcceso({
+        verificadorTokens: contenedor.emisorTokens,
+        publicas: RUTAS_PUBLICAS,
+        soloEmpleados: RUTAS_SOLO_EMPLEADOS,
+    }));
 
     app.get("/", (req, res) => res.send("Servidor funcionando."));
     app.get("/test-db", async (req, res) => {

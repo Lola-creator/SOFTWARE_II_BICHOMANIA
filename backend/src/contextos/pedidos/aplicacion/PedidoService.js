@@ -8,9 +8,8 @@ const ejecutar = require("../../../compartido/aplicacion/ejecutarPersistencia");
 const { fechaLocalISO: hoyISO } = require("../../../compartido/dominio/fechas");
 
 class PedidoService {
-    constructor({ repositorioPedidos, gestorCarritos, monederoClientes, obtenerFechaActual = () => new Date() }) {
+    constructor({ repositorioPedidos, monederoClientes, obtenerFechaActual = () => new Date() }) {
         this.pedidos = repositorioPedidos;
-        this.carritos = gestorCarritos;
         this.monedero = monederoClientes;
         this.obtenerFechaActual = obtenerFechaActual;
     }
@@ -23,9 +22,8 @@ class PedidoService {
             idDireccion: id_direccion,
             fechaPedido: fecha_pedido || hoyISO(hoy),
         });
-        const idPedido = await ejecutar(() => this.pedidos.guardar(pedido), "No se pudo crear el pedido");
-        const idNuevoCarrito = await ejecutar(
-            () => this.carritos.cerrarYAbrirNuevo(pedido.idCarrito, hoyISO(hoy)),
+        const { idPedido, idNuevoCarrito } = await ejecutar(
+            () => this.pedidos.guardarYCerrarCarrito(pedido, hoyISO(hoy)),
             "No se pudo crear el pedido",
         );
         return { ok: true, id_pedido: idPedido, nuevo_carrito: idNuevoCarrito };
@@ -63,8 +61,9 @@ class PedidoService {
     }
 
     // Elimina el pedido y devuelve al saldo del cliente lo que ya había pagado
-    async anular(idPedido) {
+    async anular(idPedido, usuario) {
         const pedido = await this.#obtener(idPedido, "Error eliminando pedido");
+        pedido.verificarPropietario(usuario?.id);
         const devolver = pedido.montoADevolverAlAnular();
         await ejecutar(() => this.pedidos.eliminar(pedido.id), "Error eliminando pedido");
         if (devolver > 0) {

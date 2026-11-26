@@ -4,15 +4,25 @@ import './encuesta.css'
 import { encuestasApi } from "../../infraestructura/encuestasApi";
 import { identidadApi } from "../../../identidad/infraestructura/identidadApi";
 import { sesion } from "../../../../compartido/infraestructura/sesion";
+
+let ultimoIdOpcion = 0;
+
+const crearOpcionVacia = () => {
+  ultimoIdOpcion += 1;
+  return { id: ultimoIdOpcion, opcion_equipo: "", opcion_liga: "", categoria: "" };
+};
+
+const crearFormularioVacio = () => ({
+  fecha_inicio: "",
+  fecha_fin: "",
+  descripcion: "",
+  opciones: [crearOpcionVacia()],
+});
+
 export default function Encuestas() {
   const [encuestas, setEncuestas] = useState([]);
   const [mostrarForm, setMostrarForm] = useState(false);
-  const [form, setForm] = useState({
-    fecha_inicio: "",
-    fecha_fin: "",
-    descripcion: "",
-    opciones: [{ opcion_equipo: "", opcion_liga: "", categoria: "" }],
-  });
+  const [form, setForm] = useState(crearFormularioVacio);
 
   const id_empleado = sesion.idEmpleado();
 
@@ -82,10 +92,7 @@ export default function Encuestas() {
   const agregarOpcion = () => {
     setForm((f) => ({
       ...f,
-      opciones: [
-        ...f.opciones,
-        { opcion_equipo: "", opcion_liga: "", categoria: "" },
-      ],
+      opciones: [...f.opciones, crearOpcionVacia()],
     }));
   };
 
@@ -93,12 +100,14 @@ export default function Encuestas() {
   const crearEncuesta = async (e) => {
     e.preventDefault();
 
-    const opcionesValidas = form.opciones.filter(
-      (o) =>
-        o.opcion_equipo.trim() ||
-        o.opcion_liga.trim() ||
-        o.categoria.trim()
-    );
+    const opcionesValidas = form.opciones
+      .filter(
+        (o) =>
+          o.opcion_equipo.trim() ||
+          o.opcion_liga.trim() ||
+          o.categoria.trim()
+      )
+      .map(({ id, ...opcion }) => opcion);
 
     try {
       const msg = await encuestasApi.crear({ ...form, opciones: opcionesValidas, id_empleado });
@@ -106,12 +115,7 @@ export default function Encuestas() {
 
       setMostrarForm(false);
 
-      setForm({
-        fecha_inicio: "",
-        fecha_fin: "",
-        descripcion: "",
-        opciones: [{ opcion_equipo: "", opcion_liga: "", categoria: "" }],
-      });
+      setForm(crearFormularioVacio());
 
       cargarEncuestas();
     } catch (err) {
@@ -150,7 +154,7 @@ export default function Encuestas() {
     try {
       const data = await encuestasApi.ganadora(id_encuesta);
 
-      if (!data || !data.opcion) {
+      if (!data?.opcion) {
         return alert("No hay votos para esta encuesta");
       }
 
@@ -238,7 +242,7 @@ export default function Encuestas() {
           <h4>Opciones</h4>
 
           {form.opciones.map((op, i) => (
-            <div key={i} style={{ marginBottom: 8 }}>
+            <div key={op.id} style={{ marginBottom: 8 }}>
               <input
                 placeholder="Equipo"
                 value={op.opcion_equipo}

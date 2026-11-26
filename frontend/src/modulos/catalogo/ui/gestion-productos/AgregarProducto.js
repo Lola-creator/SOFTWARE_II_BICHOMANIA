@@ -67,7 +67,7 @@ export default function AgregarProducto() {
       return;
     }
     const precio = Number(form.precio);
-    if (isNaN(precio) || precio <= 0) {
+    if (Number.isNaN(precio) || precio <= 0) {
       alert("El precio debe ser mayor que 0");
       return;
     }

@@ -4,6 +4,7 @@ import Pago from "./MetodoPago";
 import './pedido.css';
 import { ubicacionesApi } from "../../../ubicaciones/infraestructura/ubicacionesApi";
 import { sesion } from "../../../../compartido/infraestructura/sesion";
+import { cargarLista } from "../../../../compartido/aplicacion/cargarLista";
 
 export default function Direcciones() {
   // Se lee al montar (antes se leía al cargar el módulo y quedaba vacío si iniciabas sesión después)
@@ -13,6 +14,7 @@ export default function Direcciones() {
   const [direcciones, setDirecciones] = useState([]);
   const [paises, setPaises] = useState([]);
   const [ciudades, setCiudades] = useState([]);
+  const [errorCarga, setErrorCarga] = useState(null);
 
   const [mostrarAgregar, setMostrarAgregar] = useState(false);
   const [direccionSeleccionada, setDireccionSeleccionada] = useState(null);
@@ -40,30 +42,23 @@ export default function Direcciones() {
   }, []);
 
   const cargarDirecciones = async () => {
-    try {
-      const data = await ubicacionesApi.direcciones(id_cliente);
-      setDirecciones(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Error cargando direcciones:", err);
-      setDirecciones([]);
-    }
+    const { datos, error } = await cargarLista(
+      () => ubicacionesApi.direcciones(id_cliente), "No se pudieron cargar tus direcciones");
+    setDirecciones(datos);
+    setErrorCarga(error);
   };
 
   const cargarPaises = async () => {
-    try {
-      setPaises(await ubicacionesApi.paises());
-    } catch (err) {
-      console.error("Error cargando países:", err);
-    }
+    const { datos, error } = await cargarLista(ubicacionesApi.paises, "No se pudieron cargar los países");
+    setPaises(datos);
+    setErrorCarga(error);
   };
 
   const cargarCiudades = async (id_pais) => {
-    try {
-      const data = await ubicacionesApi.ciudades(id_pais);
-      setCiudades(Array.isArray(data) ? data : []);
-    } catch (err) {
-      setCiudades([]);
-    }
+    const { datos, error } = await cargarLista(
+      () => ubicacionesApi.ciudades(id_pais), "No se pudieron cargar las ciudades");
+    setCiudades(datos);
+    setErrorCarga(error);
   };
 
   const cambiarValor = (e) => {
@@ -129,13 +124,15 @@ export default function Direcciones() {
         {mostrarAgregar ? "Cerrar formulario" : "Agregar dirección"}
       </button>
 
+      {errorCarga && <p className="error-carga" role="alert">{errorCarga}</p>}
+
       <h3 style={{ marginTop: "20px", marginLeft: "30%"}}>Mis direcciones</h3>
       {direcciones.length === 0 ? (
         <p>No tienes direcciones registradas</p>
       ) : (
         <ul>
           {direcciones.map((d, i) => (
-            <li key={i}>
+            <li key={d.id_direccion}>
               <label style={{ cursor: "pointer" }}>
                 <input 
                   type="radio"

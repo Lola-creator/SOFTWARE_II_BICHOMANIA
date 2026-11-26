@@ -1,4 +1,3 @@
-// Adaptadores MySQL de todos los contextos
 const { crearPoolMySQL } = require("../compartido/infraestructura/mysql/conexion");
 const ClienteRepositoryMySQL = require("../contextos/identidad/infraestructura/mysql/ClienteRepositoryMySQL");
 const EmpleadoRepositoryMySQL = require("../contextos/identidad/infraestructura/mysql/EmpleadoRepositoryMySQL");

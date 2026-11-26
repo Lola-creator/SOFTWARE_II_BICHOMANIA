@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import MetodoPago from "./MetodoPago"; 
 import PagosPedido from "./PagosPedido";
 import { pedidosApi } from "../../infraestructura/pedidosApi";
@@ -32,6 +31,17 @@ export default function Deuda() {
       setCompras(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error cargando compras:", err);
+    }
+  };
+
+  const abrirBoleta = async (idPedido) => {
+    try {
+      const pdf = await pedidosApi.boleta(idPedido);
+      const url = URL.createObjectURL(pdf);
+      window.open(url, "_blank");
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } catch (err) {
+      alert(`No se pudo descargar la boleta: ${err.message}`);
     }
   };
 
@@ -151,7 +161,7 @@ export default function Deuda() {
     <p><strong>Pagado:</strong> S/. {c.pagado}</p>
 
             <button
-        onClick={() => window.open(pedidosApi.urlBoleta(c.id_pedido), "_blank")}
+        onClick={() => abrirBoleta(c.id_pedido)}
         className="p-2 bg-green-600 text-white rounded"
         >
         Descargar boleta

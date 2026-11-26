@@ -5,7 +5,6 @@
     align-items:center;
 }
 .cuadro-login{
-    margin-left:20%;
     background-color: rgba(255, 255, 255, 0.8);
     align-items: center;
     width:40%;
@@ -28,6 +27,11 @@
     width: 100%;
     padding: 10px;
     margin-left: 5px;
+    border-radius: 5px;
+    background-color: white;
+    font-style: italic;
+    border: solid black 2px;
+    font-size: larger;
 }
 .cuadro-login input{
     border: none;
@@ -35,16 +39,9 @@
     border-color: darkgoldenrod;
     background-color: white;
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    color:darkgoldenrod;
+    color: #8b6508; /* dorado oscuro accesible (5.3:1 sobre blanco) */
     font-size: larger;
     width: 100%;
-}
-.cuadro-login form button{
-    border-radius: 5px;
-    background-color: white;
-    font-style: italic;
-    border: solid black 2px;
-    font-size: larger;
 }
 .cuadro-login button:hover{
     background-color: black;
@@ -78,7 +75,8 @@
   padding-right: 40px; /* espacio para el icono */
 }
 
-.input-password-container span {
+.input-password-container .ver-contrasena,
+.input-password-container .ver-contrasena:hover {
   position: absolute;
   right: 10px;
   top: 50%;
@@ -86,4 +84,14 @@
   cursor: pointer;
   font-size: 20px;
   color: darkgoldenrod;
+  display: inline;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  font-style: normal;
+  font-family: inherit;
+  line-height: inherit;
 }

@@ -26,7 +26,9 @@
     "test:selenium": "node --test --test-timeout=600000 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=test-selenium/reporte-xunit.xml test-selenium/prueba.test.js",
     "test:ci": "react-scripts test --watchAll=false --ci --coverage --reporters=default --reporters=jest-junit"
   },
+  
     "jest": {
+    "testMatch": ["**/*.test.js"],
     "collectCoverageFrom": ["src/**/*.js", "!src/index.js", "!src/reportWebVitals.js", "!src/setupTests.js"],
     "coverageReporters": ["lcov", "text-summary"],
     "moduleNameMapper": {

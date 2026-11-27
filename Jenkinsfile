@@ -1,5 +1,4 @@
-// Pipeline de Bichomanía: pruebas automáticas (Jest + Maven/Selenium) + análisis SonarQube
-// Funciona en Jenkins sobre Windows (bat) o Linux (sh).
+
 
 def ejecutar(String comando) {
     if (isUnix()) { sh comando } else { bat comando }
@@ -8,7 +7,6 @@ def ejecutar(String comando) {
 pipeline {
     agent any
 
-    // Se ejecuta solo cada vez que hay commits nuevos (revisa el repo cada 5 minutos)
     triggers {
         pollSCM('H/5 * * * *')
     }
@@ -19,9 +17,9 @@ pipeline {
     }
 
     tools {
-        nodejs 'node20'      // Manage Jenkins > Tools > NodeJS installations
-        maven 'maven3'       // Manage Jenkins > Tools > Maven installations
-        jdk 'jdk17'          // Manage Jenkins > Tools > JDK installations
+        nodejs 'node20'     
+        maven 'maven3'       
+        jdk 'jdk17'         
     }
 
     environment {
@@ -66,7 +64,7 @@ pipeline {
         stage('Pruebas funcionales (Maven + Selenium)') {
             when { expression { params.PRUEBAS_SELENIUM } }
             steps {
-                // .env.local guardado en Jenkins como credencial "Secret file" con id bichomania-env
+
                 withCredentials([file(credentialsId: 'bichomania-env', variable: 'ENV_LOCAL')]) {
                     dir('backend') {
                         script {
@@ -87,7 +85,7 @@ pipeline {
                         }
                     }
                 }
-                // Espera a que backend (3001) y frontend (3000) respondan
+      
                 script {
                     if (isUnix()) {
                         sh 'for i in $(seq 1 30); do curl -s localhost:3001 >/dev/null && curl -s localhost:3000 >/dev/null && exit 0; sleep 2; done; exit 1'
@@ -113,8 +111,8 @@ pipeline {
         stage('Análisis SonarQube') {
             steps {
                 script {
-                    def scanner = tool 'sonar-scanner'   // Manage Jenkins > Tools > SonarQube Scanner installations
-                    withSonarQubeEnv('SonarQube') {      // Manage Jenkins > System > SonarQube servers
+                    def scanner = tool 'sonar-scanner'   
+                    withSonarQubeEnv('SonarQube') {    
                         if (isUnix()) {
                             sh "${scanner}/bin/sonar-scanner"
                         } else {
@@ -127,7 +125,7 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                // Necesita el webhook de SonarQube hacia http://<jenkins>/sonarqube-webhook/
+       
                 timeout(time: 5, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: false
                 }
